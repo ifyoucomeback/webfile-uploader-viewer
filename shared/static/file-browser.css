@@ -1,0 +1,50 @@
+.fb-browser { color: #243044; font-size: 14px; }
+.fb-toolbar, .fb-toolbar form, .fb-pagination, .fb-breadcrumbs { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.fb-toolbar { padding: 14px 0; }
+.fb-toolbar form { flex: 1; }
+.fb-browser button, .fb-button, .fb-modal button {
+    border: 1px solid #ccd5df; background: #fff; color: #334155; padding: 7px 12px;
+    border-radius: 6px; font-size: 13px; cursor: pointer; text-decoration: none; white-space: nowrap;
+}
+.fb-browser button:hover, .fb-button:hover, .fb-modal button:hover { background: #edf3fa; }
+.fb-browser button:disabled, .fb-modal button:disabled { opacity: .5; cursor: not-allowed; }
+.fb-browser input[type=search] { width: 260px; max-width: 100%; padding: 8px; border: 1px solid #ccd5df; border-radius: 6px; }
+.fb-browser input[type=checkbox] { width: 16px; height: 16px; }
+.fb-browser .fb-danger, .fb-modal .fb-danger { color: #b42318; border-color: #f1b5ae; }
+.fb-primary { background: #2563eb; color: white; }
+.fb-primary:hover { background: #1d4ed8; color: white; }
+.fb-breadcrumbs { padding: 10px 0; }
+.fb-breadcrumbs button { border: 0; color: #175cd3; padding: 4px 6px; white-space: normal; overflow-wrap: anywhere; }
+.fb-absolute, .fb-origin { color: #64748b; font-size: 12px; overflow-wrap: anywhere; }
+.fb-absolute { margin: 0 0 12px; }
+.fb-origin { margin-top: 6px; }
+.fb-error { color: #b42318; background: #fff1f0; padding: 10px 12px; border-radius: 6px; overflow-wrap: anywhere; }
+.fb-table-scroll { overflow-x: auto; }
+.fb-browser table { width: 100%; border-collapse: collapse; min-width: 660px; }
+.fb-browser th, .fb-browser td { padding: 12px 10px; text-align: left; border-bottom: 1px solid #e5eaf0; vertical-align: middle; }
+.fb-browser th { background: #f6f8fb; color: #475569; }
+.fb-browser td:nth-child(2) { min-width: 180px; }
+.fb-browser .fb-name { background: none; border: none; padding: 0; color: #175cd3; white-space: normal; overflow-wrap: anywhere; text-align: left; }
+.fb-actions { min-width: 185px; }
+.fb-actions > * { margin-right: 5px; }
+.fb-empty { padding: 35px !important; text-align: center !important; color: #64748b; }
+.fb-pagination { justify-content: flex-end; padding: 16px 0 4px; }
+.fb-modal[hidden], .fb-browser [hidden] { display: none !important; }
+.fb-modal { position: fixed; inset: 0; background: #0f172ab3; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.fb-modal-panel { width: min(1100px, 100%); max-height: 92vh; display: flex; flex-direction: column; border-radius: 10px; background: white; box-shadow: 0 24px 80px #0005; }
+.fb-modal header, .fb-modal footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 20px; }
+.fb-modal header { border-bottom: 1px solid #e5eaf0; }
+.fb-modal h2 { font-size: 17px; margin: 0; overflow-wrap: anywhere; }
+.fb-modal footer { border-top: 1px solid #e5eaf0; justify-content: flex-end; }
+.fb-modal-body { overflow: auto; padding: 15px 20px; color: #334155; }
+.fb-modal-body p { font-size: 13px; overflow-wrap: anywhere; }
+.fb-modal pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #f6f8fb; padding: 15px; border-radius: 6px; font: 13px/1.7 Consolas, monospace; max-height: 55vh; overflow: auto; }
+.fb-modal video { display: block; width: 100%; max-height: 58vh; background: #000; }
+.fb-modal [hidden] { display: none !important; }
+.fb-workspace { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 20px; }
+.fb-client-list { background: #fff; border: 1px solid #e5eaf0; border-radius: 8px; padding: 12px; }
+.fb-client-list h2 { font-size: 15px; margin: 5px 0 12px; }
+.fb-client-list a { display: block; padding: 10px; margin-bottom: 4px; border-radius: 6px; color: #334155; text-decoration: none; overflow-wrap: anywhere; }
+.fb-client-list a:hover, .fb-client-list a.active { background: #e9f0ff; color: #175cd3; }
+.fb-help { font-size: 13px; color: #64748b; line-height: 1.7; }
+@media (max-width: 1050px) { .fb-workspace { grid-template-columns: 1fr; } .fb-client-list nav { display: flex; flex-wrap: wrap; gap: 4px; } .fb-toolbar form { flex-basis: 100%; } }

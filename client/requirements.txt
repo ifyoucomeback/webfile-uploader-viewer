@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+aiohttp
+jinja2
+watchdog

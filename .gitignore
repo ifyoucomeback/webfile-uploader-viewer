@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+client/client.lock
+client/config.json
+server/config.json
+.env
+.env.*
+!.env.example
+*.zip

@@ -1,0 +1,251 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #f5f5f5;
+}
+
+.client-page-navigation { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+.client-page-navigation a { color: #175cd3; background: white; border: 1px solid #dce4ee; border-radius: 6px; padding: 9px 14px; text-decoration: none; }
+.client-page-navigation a:hover { background: #edf3ff; }
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.card h2 {
+    margin-top: 0;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.row label {
+    width: 180px;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+input,
+select {
+    width: 400px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+textarea {
+    width: 400px;
+    height: 80px;
+    padding: 8px;
+    box-sizing: border-box;
+    resize: vertical;
+}
+
+button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.save-button {
+    background: #1976d2;
+    color: white;
+}
+
+.refresh-button {
+    background: #757575;
+    color: white;
+}
+
+.upload-all-button {
+    background: #1976d2;
+    color: white;
+}
+
+.task-button {
+    background: #d32f2f;
+    color: white;
+}
+
+.task-button.start {
+    background: #388e3c;
+}
+
+.directory-add-button {
+    background: #388e3c;
+    color: white;
+}
+
+.directory-remove-button {
+    background: #d32f2f;
+    color: white;
+    margin-left: 10px;
+}
+
+.pagination-button {
+    background: #757575;
+    color: white;
+    margin-right: 6px;
+}
+
+.pagination-button:disabled {
+    background: #c0c0c0;
+    cursor: not-allowed;
+}
+
+.pagination-current {
+    font-weight: bold;
+    margin: 0 12px;
+}
+
+.status-enabled {
+    color: #388e3c;
+    font-weight: bold;
+}
+
+.status-disabled {
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+.status-connected {
+    color: #388e3c;
+    font-weight: bold;
+}
+
+.status-disconnected {
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+.message {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background: #f0f0f0;
+}
+
+.empty {
+    color: #888;
+}
+
+.directory-row {
+    background: #fafafa;
+    font-weight: bold;
+}
+
+.directory-name {
+    cursor: pointer;
+    user-select: none;
+}
+
+.directory-name:hover {
+    background: #eeeeee;
+}
+
+.directory-icon {
+    display: inline-block;
+    width: 22px;
+}
+
+.file-name {
+    padding-left: 28px;
+}
+
+.file-path {
+    color: #666;
+    font-size: 13px;
+}
+
+.progress-container {
+    width: 500px;
+    max-width: 100%;
+    height: 22px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #1976d2;
+    transition: width 0.2s;
+}
+
+.progress-text {
+    margin-left: 10px;
+    min-width: 80px;
+}
+
+.queue-count {
+    font-weight: bold;
+}
+
+.speed {
+    font-weight: bold;
+}
+
+.error-text {
+    color: #d32f2f;
+}
+
+.directory-config-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.directory-config-row input {
+    width: 500px;
+}
+
+.directory-empty {
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.pagination-container {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.pagination-info {
+    margin-left: 10px;
+    color: #666;
+}
+
+/* 并发上传列表 */
+.table-scroll { overflow-x: auto; }
+.hint { color: #666; font-size: 13px; line-height: 1.6; }
+#activeUploadTable td:first-child { overflow-wrap: anywhere; min-width: 200px; }
+#activeUploadTable progress { width: 120px; vertical-align: middle; margin-right: 8px; }

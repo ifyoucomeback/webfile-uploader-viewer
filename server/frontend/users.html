@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户管理</title>
+    <link rel="stylesheet" href="/frontend/css/style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <div class="logo-icon">▶</div>
+            <div>
+                <div class="sidebar-title">视频管理</div>
+                <div class="sidebar-subtitle">Video System</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="/frontend/dashboard.html" class="nav-item">
+                <span>📊</span>
+                <span>仪表盘</span>
+            </a>
+
+            <a href="/frontend/files.html" class="nav-item">
+                <span>📁</span>
+                <span>文件浏览</span>
+            </a>
+
+            <a href="/frontend/uploads.html" class="nav-item">
+                <span>⬆</span>
+                <span>上传任务</span>
+            </a>
+
+            <a href="/frontend/clients.html" class="nav-item">
+                <span>💻</span>
+                <span>客户端</span>
+            </a>
+
+            <a href="/frontend/storage.html" class="nav-item">
+                <span>💾</span>
+                <span>存储空间</span>
+            </a>
+
+            <a href="/frontend/users.html" class="nav-item active root-only" id="usersNav">
+                <span>👤</span>
+                <span>用户管理</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <div>
+                <h1>用户管理</h1>
+                <div class="page-description">
+                    管理 Web 管理后台用户
+                </div>
+            </div>
+
+            <div class="topbar-right">
+
+                <span id="currentUsername" class="username"></span>
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="logout()"
+                >
+                    退出登录
+                </button>
+
+            </div>
+
+        </header>
+
+        <section class="content">
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>用户列表</h2>
+
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        onclick="openCreateUserModal()"
+                    >
+                        创建用户
+                    </button>
+
+                </div>
+
+                <div id="usersTable" class="table-container">
+                    <div class="loading">正在加载...</div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- 创建用户 -->
+
+<div id="createUserModal" class="modal hidden">
+
+    <div class="modal-overlay" onclick="closeCreateUserModal()"></div>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>创建用户</h2>
+
+            <button
+                type="button"
+                class="modal-close"
+                onclick="closeCreateUserModal()"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <form id="createUserForm">
+
+            <div class="form-group">
+
+                <label for="newUsername">
+                    用户名
+                </label>
+
+                <input
+                    type="text"
+                    id="newUsername"
+                    required
+                    autocomplete="off"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="newPassword">
+                    密码
+                </label>
+
+                <input
+                    type="password"
+                    id="newPassword"
+                    required
+                    autocomplete="new-password"
+                >
+
+            </div>
+
+            <div id="createUserError" class="error-message hidden"></div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="closeCreateUserModal()"
+                >
+                    取消
+                </button>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    创建
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- 修改密码 -->
+
+<div id="passwordModal" class="modal hidden">
+
+    <div class="modal-overlay" onclick="closePasswordModal()"></div>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>修改密码</h2>
+
+            <button
+                type="button"
+                class="modal-close"
+                onclick="closePasswordModal()"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <form id="passwordForm">
+
+            <input type="hidden" id="passwordUsername">
+
+            <div class="form-group">
+
+                <label>
+                    用户名
+                </label>
+
+                <input
+                    type="text"
+                    id="passwordUsernameDisplay"
+                    disabled
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="newUserPassword">
+                    新密码
+                </label>
+
+                <input
+                    type="password"
+                    id="newUserPassword"
+                    required
+                    autocomplete="new-password"
+                >
+
+            </div>
+
+            <div id="passwordError" class="error-message hidden"></div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="closePasswordModal()"
+                >
+                    取消
+                </button>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    修改密码
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script src="/frontend/js/api.js"></script>
+<script src="/frontend/js/auth.js"></script>
+<script src="/frontend/js/common.js"></script>
+<script src="/frontend/js/users.js"></script>
+
+</body>
+</html>

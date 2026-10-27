@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件浏览</title>
+    <link rel="stylesheet" href="/frontend/css/style.css">
+    <link rel="stylesheet" href="/file-browser-assets/file-browser.css">
+</head>
+<body><div class="app">
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">▶</div>
+            <div>
+                <div class="sidebar-title">视频管理</div>
+                <div class="sidebar-subtitle">Video System</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="/frontend/dashboard.html" class="nav-item">
+                <span>📊</span>
+                <span>仪表盘</span>
+            </a>
+
+            <a href="/frontend/files.html" class="nav-item active">
+                <span>📁</span>
+                <span>文件浏览</span>
+            </a>
+
+            <a href="/frontend/uploads.html" class="nav-item">
+                <span>⬆</span>
+                <span>上传任务</span>
+            </a>
+
+            <a href="/frontend/clients.html" class="nav-item">
+                <span>💻</span>
+                <span>客户端</span>
+            </a>
+
+            <a href="/frontend/storage.html" class="nav-item">
+                <span>💾</span>
+                <span>存储空间</span>
+            </a>
+
+            <a href="/frontend/users.html" class="nav-item root-only hidden" id="usersNav">
+                <span>👤</span>
+                <span>用户管理</span>
+            </a>
+
+        </nav>
+    </aside>
+<main class="main">
+    <header class="topbar"><div><h1>文件浏览</h1><div class="page-description">按客户端浏览服务器实际保存目录</div></div>
+        <div class="topbar-right"><span id="currentUsername" class="username"></span>
+        <button type="button" class="btn btn-secondary" onclick="logout()">退出登录</button></div></header>
+    <section class="content">
+        <div class="fb-workspace">
+            <aside class="fb-client-list"><h2>客户端文件导航</h2>
+                <button class="btn btn-secondary" type="button" id="refreshFileClients">刷新客户端</button>
+                <p class="fb-help" id="clientNavigationMessage" role="status"></p>
+                <nav id="fileClientNavigation" aria-label="选择客户端"></nav>
+            </aside>
+            <div class="panel" style="padding: 18px; min-width: 0;">
+                <h2 id="selectedClientTitle">请选择客户端</h2>
+                <p class="fb-help">按服务器实际目录逐层浏览，文件下方标注原始路径。删除服务端副本后，客户端的原文件仍保留，后续同步可能重新上传。</p>
+                <p class="fb-help" id="fileBrowserWelcome">选择左侧客户端，查看该客户端保存在服务器上的所有文件夹和文件。</p>
+                <div id="serverFileBrowser" hidden></div>
+            </div>
+        </div>
+    </section>
+</main></div>
+<script src="/frontend/js/api.js"></script>
+<script src="/frontend/js/auth.js"></script>
+<script src="/frontend/js/common.js"></script>
+<script src="/file-browser-assets/file-preview.js"></script>
+<script src="/file-browser-assets/file-browser.js"></script>
+<script src="/frontend/js/files.js"></script>
+</body></html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频管理系统 - 登录</title>
+    <link rel="stylesheet" href="/frontend/css/style.css">
+</head>
+
+<body class="login-page">
+
+<div class="login-container">
+
+    <div class="login-card">
+
+        <div class="login-logo">
+            <div class="logo-icon">▶</div>
+            <div>
+                <div class="logo-title">视频管理系统</div>
+                <div class="logo-subtitle">Video Management System</div>
+            </div>
+        </div>
+
+        <form id="loginForm">
+
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    autocomplete="username"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <div id="loginError" class="error-message hidden"></div>
+
+            <button
+                type="submit"
+                id="loginButton"
+                class="btn btn-primary btn-full"
+            >
+                登录
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script src="/frontend/js/api.js"></script>
+<script src="/frontend/js/auth.js"></script>
+<script src="/frontend/js/login.js"></script>
+
+</body>
+</html>

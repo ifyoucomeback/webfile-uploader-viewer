@@ -1,0 +1,29 @@
+{
+    "server": {
+        "host": "0.0.0.0",
+        "port": 5211
+    },
+    "storage": {
+        "upload_directory": "/data/video_upload",
+        "uploading_directory": "/data/video_upload/.uploading"
+    },
+    "dns": {
+        "server": "127.0.0.1",
+        "timeout": 5
+    },
+    "upload": {
+        "chunk_size": 1048576,
+        "max_file_size": 0,
+        "incomplete_expire_days": 30,
+        "min_free_space": 5368709120
+    },
+    "auth": {
+        "upload_psk": "",
+        "web_users": [],
+        "session_expire_hours": 12,
+        "root": {
+            "username": "root",
+            "password_hash": ""
+        }
+    }
+}

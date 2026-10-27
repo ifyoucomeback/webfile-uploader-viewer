@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频管理系统 - 仪表盘</title>
+    <link rel="stylesheet" href="/frontend/css/style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <div class="logo-icon">▶</div>
+            <div>
+                <div class="sidebar-title">视频管理</div>
+                <div class="sidebar-subtitle">Video System</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="/frontend/dashboard.html" class="nav-item active">
+                <span>📊</span>
+                <span>仪表盘</span>
+            </a>
+
+            <a href="/frontend/files.html" class="nav-item">
+                <span>📁</span>
+                <span>文件浏览</span>
+            </a>
+
+            <a href="/frontend/uploads.html" class="nav-item">
+                <span>⬆</span>
+                <span>上传任务</span>
+            </a>
+
+            <a href="/frontend/clients.html" class="nav-item">
+                <span>💻</span>
+                <span>客户端</span>
+            </a>
+
+            <a href="/frontend/storage.html" class="nav-item">
+                <span>💾</span>
+                <span>存储空间</span>
+            </a>
+
+            <a
+                href="/frontend/users.html"
+                class="nav-item root-only hidden"
+                id="usersNav"
+            >
+                <span>👤</span>
+                <span>用户管理</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <div>
+                <h1>仪表盘</h1>
+                <div class="page-description">
+                    系统运行状态与存储概览
+                </div>
+            </div>
+
+            <div class="topbar-right">
+
+                <span id="currentUsername" class="username"></span>
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="logout()"
+                >
+                    退出登录
+                </button>
+
+            </div>
+
+        </header>
+
+        <section class="content">
+
+            <div class="stat-grid">
+
+                <div class="stat-card">
+                    <div class="stat-icon">🎬</div>
+                    <div>
+                        <div class="stat-label">视频文件</div>
+                        <div id="fileCount" class="stat-value">-</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">⬆</div>
+                    <div>
+                        <div class="stat-label">上传任务</div>
+                        <div id="uploadCount" class="stat-value">-</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">💻</div>
+                    <div>
+                        <div class="stat-label">客户端</div>
+                        <div id="clientCount" class="stat-value">-</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">💾</div>
+                    <div>
+                        <div class="stat-label">存储使用率</div>
+                        <div id="storagePercent" class="stat-value">-</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="dashboard-grid">
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <h2>存储空间</h2>
+                        <a href="/frontend/storage.html">详细信息</a>
+                    </div>
+
+                    <div class="storage-summary">
+
+                        <div class="storage-progress">
+                            <div
+                                id="storageProgress"
+                                class="storage-progress-bar"
+                                style="width: 0%"
+                            ></div>
+                        </div>
+
+                        <div class="storage-info-row">
+                            <span id="storageUsed">-</span>
+                            <span id="storageTotal">-</span>
+                        </div>
+
+                        <div class="storage-info-row storage-secondary">
+                            <span>已使用</span>
+                            <span>总容量</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <h2>最近上传任务</h2>
+                        <a href="/frontend/uploads.html">全部任务</a>
+                    </div>
+
+                    <div id="recentUploads" class="mini-list">
+                        <div class="loading">正在加载...</div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <h2>客户端</h2>
+                    <a href="/frontend/clients.html">查看全部</a>
+                </div>
+
+                <div id="clientsList" class="table-container">
+                    <div class="loading">正在加载...</div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="/frontend/js/api.js"></script>
+<script src="/frontend/js/auth.js"></script>
+<script src="/frontend/js/common.js"></script>
+<script src="/frontend/js/dashboard.js"></script>
+
+</body>
+</html>

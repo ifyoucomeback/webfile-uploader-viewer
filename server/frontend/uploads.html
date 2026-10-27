@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>上传任务</title>
+    <link rel="stylesheet" href="/frontend/css/style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <div class="logo-icon">▶</div>
+            <div>
+                <div class="sidebar-title">视频管理</div>
+                <div class="sidebar-subtitle">Video System</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="/frontend/dashboard.html" class="nav-item">
+                <span>📊</span>
+                <span>仪表盘</span>
+            </a>
+
+            <a href="/frontend/files.html" class="nav-item">
+                <span>📁</span>
+                <span>文件浏览</span>
+            </a>
+
+            <a href="/frontend/uploads.html" class="nav-item active">
+                <span>⬆</span>
+                <span>上传任务</span>
+            </a>
+
+            <a href="/frontend/clients.html" class="nav-item">
+                <span>💻</span>
+                <span>客户端</span>
+            </a>
+
+            <a href="/frontend/storage.html" class="nav-item">
+                <span>💾</span>
+                <span>存储空间</span>
+            </a>
+
+            <a href="/frontend/users.html" class="nav-item root-only hidden" id="usersNav">
+                <span>👤</span>
+                <span>用户管理</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <div>
+                <h1>上传任务</h1>
+                <div class="page-description">
+                    查看当前进行中的视频上传任务
+                </div>
+            </div>
+
+            <div class="topbar-right">
+
+                <span id="currentUsername" class="username"></span>
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="logout()"
+                >
+                    退出登录
+                </button>
+
+            </div>
+
+        </header>
+
+        <section class="content">
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <h2>当前任务</h2>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        onclick="loadUploads()"
+                    >
+                        刷新
+                    </button>
+
+                </div>
+
+                <div id="uploadsTable" class="table-container">
+                    <div class="loading">正在加载...</div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="/frontend/js/api.js"></script>
+<script src="/frontend/js/auth.js"></script>
+<script src="/frontend/js/common.js"></script>
+<script src="/frontend/js/uploads.js"></script>
+
+</body>
+</html>

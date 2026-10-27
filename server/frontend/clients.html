@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客户端</title>
+    <link rel="stylesheet" href="/frontend/css/style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <div class="logo-icon">▶</div>
+            <div>
+                <div class="sidebar-title">视频管理</div>
+                <div class="sidebar-subtitle">Video System</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="/frontend/dashboard.html" class="nav-item">
+                <span>📊</span>
+                <span>仪表盘</span>
+            </a>
+
+            <a href="/frontend/files.html" class="nav-item">
+                <span>📁</span>
+                <span>文件浏览</span>
+            </a>
+
+            <a href="/frontend/uploads.html" class="nav-item">
+                <span>⬆</span>
+                <span>上传任务</span>
+            </a>
+
+            <a href="/frontend/clients.html" class="nav-item active">
+                <span>💻</span>
+                <span>客户端</span>
+            </a>
+
+            <a href="/frontend/storage.html" class="nav-item">
+                <span>💾</span>
+                <span>存储空间</span>
+            </a>
+
+            <a href="/frontend/users.html" class="nav-item root-only hidden" id="usersNav">
+                <span>👤</span>
+                <span>用户管理</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <div>
+                <h1>客户端</h1>
+                <div class="page-description">
+                    查看视频上传客户端状态
+                </div>
+            </div>
+
+            <div class="topbar-right">
+
+                <span id="currentUsername" class="username"></span>
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="logout()"
+                >
+                    退出登录
+                </button>
+
+            </div>
+
+        </header>
+
+        <section class="content">
+            <div class="panel" style="padding: 18px; margin-bottom: 18px;">
+                <h2>客户端文件导航</h2>
+                <p class="page-description">选择客户端，进入其在服务器上的实际保存目录。</p>
+                <div id="clientFileNavigation" class="client-file-navigation"></div>
+            </div>
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <h2>客户端列表</h2>
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        onclick="loadClients()"
+                    >
+                        刷新
+                    </button>
+                </div>
+
+                <div id="clientsTable" class="table-container">
+                    <div class="loading">正在加载...</div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="/frontend/js/api.js"></script>
+<script src="/frontend/js/auth.js"></script>
+<script src="/frontend/js/common.js"></script>
+<script src="/frontend/js/clients.js"></script>
+
+</body>
+</html>

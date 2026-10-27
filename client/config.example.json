@@ -1,0 +1,25 @@
+{
+    "server": {
+        "host": "127.0.0.1",
+        "port": 5211
+    },
+    "monitor": {
+        "directories": [],
+        "include_extensions": [
+            ".mp4",
+            ".mkv",
+            ".avi"
+        ],
+        "exclude_extensions": [
+            ".tmp",
+            ".part"
+        ],
+        "interval": 600
+    },
+    "upload": {
+        "enabled": true,
+        "max_bandwidth": 307200,
+        "psk": "",
+        "max_concurrent_uploads": 1
+    }
+}
