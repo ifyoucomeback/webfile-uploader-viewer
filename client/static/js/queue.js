@@ -1,248 +1,60 @@
+/* 等待队列已包含在状态响应中，翻页只切换本地视图，不改变上传顺序。 */
 const QUEUE_PAGE_SIZE = 50;
 let currentQueuePage = 1;
 let currentQueueTotalPages = 0;
+let latestQueue = [];
+let queuePageJump = null;
 
-function renderQueue(
-    queue
-) {
-    const queueCount =
-        document.getElementById(
-            "queueCount"
-        );
-    const queueTable =
-        document.getElementById(
-            "queueTable"
-        );
-    const previousButton =
-        document.getElementById(
-            "queuePreviousPageButton"
-        );
-    const nextButton =
-        document.getElementById(
-            "queueNextPageButton"
-        );
-    const paginationCurrent =
-        document.getElementById(
-            "queuePaginationCurrent"
-        );
-    if (
-        !queue
-    ) {
-        queue = [];
-    }
-    /*
-     * 显示全部等待任务数量
-     */
-    queueCount.textContent =
-        queue.length;
-    /*
-     * 计算总页数
-     */
-    currentQueueTotalPages =
-        queue.length > 0 ?
-        Math.ceil(
-            queue.length /
-            QUEUE_PAGE_SIZE
-        ) :
-        0;
-    /*
-     * 如果任务完成导致当前页不存在，
-     * 自动回到最后一页。
-     */
-    if (
-        currentQueueTotalPages === 0
-    ) {
-        currentQueuePage = 1;
-    } else if (
-        currentQueuePage >
-        currentQueueTotalPages
-    ) {
-        currentQueuePage =
-            currentQueueTotalPages;
-    }
-    /*
-     * 当前页数据
-     */
-    const start =
-        (
-            currentQueuePage - 1
-        ) *
-        QUEUE_PAGE_SIZE;
-    const end =
-        start +
-        QUEUE_PAGE_SIZE;
-    const pageQueue =
-        queue.slice(
-            start,
-            end
-        );
-    queueTable.innerHTML =
-        "";
-    if (
-        pageQueue.length === 0
-    ) {
-        const row =
-            document.createElement(
-                "tr"
-            );
-        const cell =
-            document.createElement(
-                "td"
-            );
+function renderQueue(queue) {
+    latestQueue = Array.isArray(queue) ? queue : [];
+    document.getElementById("queueCount").textContent = latestQueue.length;
+    currentQueueTotalPages = Math.ceil(latestQueue.length / QUEUE_PAGE_SIZE);
+    currentQueuePage = Math.min(Math.max(1, currentQueuePage), currentQueueTotalPages || 1);
+    const start = (currentQueuePage - 1) * QUEUE_PAGE_SIZE;
+    const table = document.getElementById("queueTable");
+    table.replaceChildren();
+    const items = latestQueue.slice(start, start + QUEUE_PAGE_SIZE);
+    if (!items.length) {
+        const cell = table.insertRow().insertCell();
         cell.colSpan = 4;
-        cell.className =
-            "empty";
-        cell.textContent =
-            "没有等待上传的文件";
-        row.appendChild(
-            cell
-        );
-        queueTable.appendChild(
-            row
-        );
-    } else {
-        pageQueue.forEach(
-            function(file) {
-                const row =
-                    document.createElement(
-                        "tr"
-                    );
-                const nameCell =
-                    document.createElement(
-                        "td"
-                    );
-                nameCell.textContent =
-                    file.name || "-";
-                const pathCell =
-                    document.createElement(
-                        "td"
-                    );
-                pathCell.className =
-                    "file-path";
-                pathCell.textContent =
-                    file.relative_path ||
-                    file.name ||
-                    "-";
-                const sizeCell =
-                    document.createElement(
-                        "td"
-                    );
-                sizeCell.textContent =
-                    formatSize(
-                        file.size
-                    );
-                const extensionCell =
-                    document.createElement(
-                        "td"
-                    );
-                extensionCell.textContent =
-                    file.extension || "-";
-                row.appendChild(
-                    nameCell
-                );
-                row.appendChild(
-                    pathCell
-                );
-                row.appendChild(
-                    sizeCell
-                );
-                row.appendChild(
-                    extensionCell
-                );
-                queueTable.appendChild(
-                    row
-                );
-            }
-        );
+        cell.className = "empty";
+        cell.textContent = "没有等待上传的文件";
     }
-    /*
-     * 更新分页信息
-     */
-    if (
-        currentQueueTotalPages > 0
-    ) {
-        paginationCurrent.textContent =
-            "第 " +
-            currentQueuePage +
-            " / " +
-            currentQueueTotalPages +
-            " 页";
-    } else {
-        paginationCurrent.textContent =
-            "第 0 / 0 页";
+    items.forEach(file => {
+        const row = table.insertRow();
+        row.insertCell().textContent = file.name || "-";
+        const path = row.insertCell();
+        path.className = "file-path";
+        path.textContent = file.relative_path || file.name || "-";
+        row.insertCell().textContent = formatSize(file.size);
+        row.insertCell().textContent = file.extension || "-";
+    });
+    document.getElementById("queuePaginationCurrent").textContent = currentQueueTotalPages ?
+        `第 ${currentQueuePage} / ${currentQueueTotalPages} 页` : "第 0 / 0 页";
+    document.getElementById("queuePreviousPageButton").disabled =
+        currentQueueTotalPages === 0 || currentQueuePage <= 1;
+    document.getElementById("queueNextPageButton").disabled =
+        currentQueueTotalPages === 0 || currentQueuePage >= currentQueueTotalPages;
+    if (!queuePageJump) {
+        queuePageJump = new PageJump(document.getElementById("queuePageJump"), goToQueuePage);
     }
-    /*
-     * 上一页按钮
-     */
-    previousButton.disabled =
-        currentQueueTotalPages === 0 ||
-        currentQueuePage <= 1;
-    /*
-     * 下一页按钮
-     */
-    nextButton.disabled =
-        currentQueueTotalPages === 0 ||
-        currentQueuePage >=
-        currentQueueTotalPages;
+    queuePageJump.update(currentQueuePage, currentQueueTotalPages);
+}
+
+function goToQueuePage(page) {
+    if (!Number.isSafeInteger(page) || page < 1 || page > currentQueueTotalPages) return;
+    currentQueuePage = page;
+    refreshCurrentQueuePage();
 }
 
 function previousQueuePage() {
-    if (
-        currentQueuePage <= 1
-    ) {
-        return;
-    }
-    currentQueuePage--;
-    /*
-     * 这里不重新请求服务器。
-     * 当前 status.queue 已经保存在页面内，
-     * 下一次刷新时 renderQueue 会继续使用当前页。
-     */
-    refreshCurrentQueuePage();
+    goToQueuePage(currentQueuePage - 1);
 }
 
 function nextQueuePage() {
-    if (
-        currentQueuePage >=
-        currentQueueTotalPages
-    ) {
-        return;
-    }
-    currentQueuePage++;
-    refreshCurrentQueuePage();
+    goToQueuePage(currentQueuePage + 1);
 }
 
 function refreshCurrentQueuePage() {
-    /*
-     * 重新获取当前状态，保证翻页时看到的是最新队列。
-     */
-    fetch(
-            "/api/status"
-        )
-        .then(
-            function(response) {
-                if (!response.ok) {
-                    throw new Error(
-                        "HTTP " +
-                        response.status
-                    );
-                }
-                return response.json();
-            }
-        )
-        .then(
-            function(status) {
-                renderQueue(
-                    status.queue || []
-                );
-            }
-        )
-        .catch(
-            function(error) {
-                console.error(
-                    "刷新上传队列失败:",
-                    error
-                );
-            }
-        );
+    renderQueue(latestQueue);
 }

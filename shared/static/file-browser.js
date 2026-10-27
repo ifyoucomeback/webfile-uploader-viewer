@@ -22,10 +22,12 @@ class FileBrowser {
                 <th>名称</th><th>大小</th><th>修改时间</th><th>操作</th>
             </tr></thead><tbody></tbody></table></div>
             <div class="fb-pagination"><button type="button" data-previous>上一页</button>
-                <span data-page></span><button type="button" data-next>下一页</button></div>`;
+                <span data-page></span><button type="button" data-next>下一页</button>
+                <div data-jump></div></div>`;
         this.table = container.querySelector("tbody");
         this.error = container.querySelector(".fb-error");
         this.search = container.querySelector("input[type=search]");
+        this.pageJump = new PageJump(container.querySelector("[data-jump]"), page => this.load(page));
         this.preview = new FilePreview({
             url: options.url,
             readText: options.readText,
@@ -248,6 +250,7 @@ class FileBrowser {
             `第 ${totalPages ? this.page : 0} / ${totalPages} 页 · 当前目录共 ${this.data?.total || 0} 项`;
         this.container.querySelector("[data-previous]").disabled = this.page <= 1;
         this.container.querySelector("[data-next]").disabled = this.page >= totalPages;
+        this.pageJump.update(this.page, totalPages);
         this.updateSelection();
     }
     updateSelection() {
