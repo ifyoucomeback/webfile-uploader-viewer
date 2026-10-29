@@ -1,6 +1,7 @@
 """客户端 Web 应用装配与静态资源。"""
 
 from contextlib import asynccontextmanager
+from hashlib import sha256
 from pathlib import Path
 
 from fastapi import FastAPI, Request
@@ -11,8 +12,6 @@ from fastapi.templating import Jinja2Templates
 from shared.assets import STATIC_DIRECTORY
 
 from .application import ClientApplication
-from .client_info import get_client_info
-from .config import load_config
 from .routes import (
     config,
     file_actions,
@@ -31,6 +30,20 @@ BASE_DIR = Path(__file__).resolve().parent
 def create_app(application_factory=ClientApplication, lock_file=None):
     runtime = ClientRuntime(application_factory, lock_file)
     templates = Jinja2Templates(directory=BASE_DIR / "templates")
+    asset_versions = {}
+    for prefix, directory in (
+        ("/static/", BASE_DIR / "static"),
+        ("/file-browser-assets/", STATIC_DIRECTORY),
+    ):
+        for path in directory.rglob("*"):
+            if path.is_file():
+                url = prefix + path.relative_to(directory).as_posix()
+                asset_versions[url] = sha256(path.read_bytes()).hexdigest()[:12]
+
+    def asset_url(url):
+        return f"{url}?v={asset_versions[url]}"
+
+    templates.env.globals["asset_url"] = asset_url
 
     @asynccontextmanager
     async def lifespan(app):
@@ -49,18 +62,29 @@ def create_app(application_factory=ClientApplication, lock_file=None):
     )
     app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 
-    @app.get("/", response_class=HTMLResponse)
-    async def index(request: Request):
-        client = (
-            runtime.application.client_info
-            if runtime.application
-            else get_client_info()
-        )
+    def render_page(request, template, page, title):
         return templates.TemplateResponse(
             request=request,
-            name="index.html",
-            context={"config": load_config(), "client": client},
+            name=template,
+            context={"page": page, "page_title": title},
+            headers={"Cache-Control": "no-cache"},
         )
+
+    @app.get("/", response_class=HTMLResponse)
+    async def index(request: Request):
+        return render_page(request, "index.html", "uploads", "正在上传")
+
+    @app.get("/queue", response_class=HTMLResponse)
+    async def queue_page(request: Request):
+        return render_page(request, "queue.html", "queue", "上传队列")
+
+    @app.get("/files", response_class=HTMLResponse)
+    async def files_page(request: Request):
+        return render_page(request, "files.html", "files", "本地文件浏览")
+
+    @app.get("/settings", response_class=HTMLResponse)
+    async def settings_page(request: Request):
+        return render_page(request, "settings.html", "settings", "设置")
 
     for module in (
         config,

@@ -143,8 +143,9 @@ class ClientWorkers:
     async def monitor_loop(self):
         self.app.monitor.start()
         try:
-            await self.app.sync.add_initial_files()
             while self.app.running:
+                # 首次成功前持续检查，网络暂时不可用时也不会丢失启动同步。
+                await self.app.sync.add_initial_files()
                 await self.app.sync.add_changed_files()
                 await asyncio.sleep(0.2)
         finally:

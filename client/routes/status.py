@@ -1,6 +1,6 @@
 """客户端 status 接口。"""
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Query, Request
 
 from ..client_info import get_client_info
 
@@ -16,7 +16,7 @@ async def get_client(request: Request):
 
 
 @router.get("/api/status")
-async def get_status(request: Request):
+async def get_status(request: Request, include_queue: bool = True):
     application = request.app.state.runtime.application
     if application is None:
         return {
@@ -37,7 +37,7 @@ async def get_status(request: Request):
         }
     uploader_status = application.uploader.get_status()
     queue_items = []
-    for item in application.queue.snapshot():
+    for item in application.queue.snapshot() if include_queue else ():
         queue_items.append(
             {
                 "path": item["path"],
@@ -62,8 +62,41 @@ async def get_status(request: Request):
         "currents": uploader_status["currents"],
         "active_count": len(application.active_files),
         "max_concurrent_uploads": application.max_concurrent_uploads,
-        "retrying": list(application.workers.retrying.values()),
+        "retrying": (
+            list(application.workers.retrying.values()) if include_queue else []
+        ),
+        "retry_count": len(application.workers.retrying),
         "queue": queue_items,
-        "queue_count": len(queue_items),
+        "queue_count": application.upload_queue.qsize(),
         "speed": (uploader_status["speed"]),
+        "bandwidth": uploader_status["bandwidth"],
     }
+
+
+@router.get("/api/queue")
+async def get_queue(
+    request: Request,
+    page: int = Query(1, ge=1),
+    page_size: int = Query(50, ge=1, le=100),
+):
+    application = request.app.state.runtime.application
+    if application is None:
+        return {
+            "success": True,
+            "page": 1,
+            "page_size": page_size,
+            "total": 0,
+            "total_pages": 0,
+            "items": [],
+        }
+    result = application.queue.page(page, page_size)
+    result["items"] = [
+        {
+            "name": item["name"],
+            "relative_path": item.get("relative_path", item["name"]),
+            "size": item["size"],
+            "extension": item.get("extension", ""),
+        }
+        for item in result["items"]
+    ]
+    return result

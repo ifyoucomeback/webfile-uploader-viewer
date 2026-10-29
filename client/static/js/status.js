@@ -16,11 +16,16 @@ function renderStatus(status) {
     renderServerConnection(status);
     const taskStatus = document.getElementById("taskStatus");
     const taskButton = document.getElementById("taskButton");
-    taskStatus.textContent = status.enabled ? "已开启" : "已暂停（进行中的上传将继续完成）";
-    taskStatus.className = status.enabled ? "status-enabled" : "status-disabled";
-    taskButton.textContent = status.enabled ? "暂停任务" : "开始任务";
-    taskButton.className = status.enabled ? "task-button" : "task-button start";
-    renderUploadStatus(status);
+    if (taskStatus && taskButton) {
+        taskStatus.textContent = status.enabled ? "已开启" : "已暂停（进行中的上传将继续完成）";
+        taskStatus.className = status.enabled ? "status-enabled" : "status-disabled";
+        taskButton.textContent = status.enabled ? "暂停任务" : "开始任务";
+        taskButton.className = status.enabled ? "task-button" : "task-button start";
+    }
+    if (document.getElementById("activeUploadTable")) renderUploadStatus(status);
+    const bandwidth = document.getElementById("uploadBandwidthLimit");
+    if (bandwidth) bandwidth.textContent = status.max_bandwidth > 0
+        ? `${status.max_bandwidth} Bytes/s（所有文件共享）` : "不限速";
 }
 
 function renderUploadStatus(status) {
@@ -54,8 +59,7 @@ function renderUploadStatus(status) {
         row.insertCell().textContent = stages[file.stage] || "上传中";
         row.insertCell().textContent = formatSpeed(file.speed || 0);
     });
-    const retrying = status.retrying || [];
-    document.getElementById("retrySummary").textContent = retrying.length
-        ? `另有 ${retrying.length} 个文件等待重试，不占用上传名额。` : "";
-    renderQueue(status.queue || []);
+    const retryCount = status.retry_count ?? (status.retrying || []).length;
+    document.getElementById("retrySummary").textContent = retryCount
+        ? `另有 ${retryCount} 个文件等待重试，不占用上传名额。` : "";
 }

@@ -22,9 +22,8 @@ async def update_task(request: Request, data: dict):
         application.enabled = enabled
         application.config = config
         if enabled:
-            await application.add_changed_files()
-            if not application.upload_queue.empty():
-                application.queue_event.set()
+            application.sync.request_full_sync()
+            application.queue_event.set()
     return {"success": True, "enabled": enabled}
 
 

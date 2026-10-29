@@ -1,101 +1,70 @@
+/* 各页面只初始化自身功能，共用客户端信息和连接状态刷新。 */
+const clientPage = document.body.dataset.page;
+let pageRefreshTimer = null;
+let pageRefreshing = false;
+let pageClosed = false;
+let pageLoadError = null;
+
+async function readPageData(url) {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`读取数据失败：HTTP ${response.status}`);
+    return response.json();
+}
+
+function showPageError(error) {
+    const message = document.getElementById("pageMessage");
+    message.textContent = error ? error.message : "";
+    message.hidden = !error;
+}
+
 async function loadPage() {
     try {
-        const configResponse =
-            await fetch(
-                "/api/config"
-            );
-        if (
-            !configResponse.ok
-        ) {
-            throw new Error(
-                "读取配置失败: HTTP " +
-                configResponse.status
-            );
-        }
-        const config =
-            await configResponse.json();
-        setConfig(
-            config
-        );
-        const clientResponse =
-            await fetch(
-                "/api/client"
-            );
-        if (
-            !clientResponse.ok
-        ) {
-            throw new Error(
-                "读取客户端信息失败: HTTP " +
-                clientResponse.status
-            );
-        }
-        const client =
-            await clientResponse.json();
-        renderClient(
-            client
-        );
-        const statusResponse =
-            await fetch(
-                "/api/status"
-            );
-        if (
-            !statusResponse.ok
-        ) {
-            throw new Error(
-                "读取客户端状态失败: HTTP " +
-                statusResponse.status
-            );
-        }
-        const status =
-            await statusResponse.json();
-        renderStatus(
-            status
-        );
-        await loadInitialFiles();
+        if (clientPage === "settings") setConfig(await readPageData("/api/config"));
+        if (clientPage === "files") await loadInitialFiles();
     } catch (error) {
-        console.error(
-            "加载页面失败:",
-            error
-        );
+        pageLoadError = error;
+        showPageError(error);
+        return;
     }
+    await refreshPage();
 }
+
 async function refreshPage() {
+    if (pageRefreshing || pageClosed || document.hidden) return;
+    pageRefreshing = true;
     try {
-        const clientResponse =
-            await fetch(
-                "/api/client"
-            );
-        if (
-            !clientResponse.ok
-        ) {
-            return;
-        }
-        const client =
-            await clientResponse.json();
-        renderClient(
-            client
-        );
-        const statusResponse =
-            await fetch(
-                "/api/status"
-            );
-        if (
-            !statusResponse.ok
-        ) {
-            return;
-        }
-        const status =
-            await statusResponse.json();
-        renderStatus(
-            status
-        );
-        await refreshLocalFiles();
+        const [client, status] = await Promise.all([
+            readPageData("/api/client"),
+            readPageData("/api/status?include_queue=false"),
+        ]);
+        if (pageClosed) return;
+        renderClient(client);
+        renderStatus(status);
+        if (clientPage === "queue") await refreshCurrentQueuePage(true);
+        if (clientPage === "files") await refreshLocalFiles();
+        showPageError(pageLoadError);
     } catch (error) {
-        console.error(
-            "刷新页面失败:",
-            error
-        );
+        showPageError(error);
+    } finally {
+        pageRefreshing = false;
     }
 }
-loadPage();
-setInterval(refreshPage, 1000);
+
+window.addEventListener("pagehide", () => {
+    pageClosed = true;
+    clearInterval(pageRefreshTimer);
+});
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) refreshPage();
+});
+window.addEventListener("pageshow", event => {
+    if (event.persisted) {
+        pageClosed = false;
+        refreshPage();
+        pageRefreshTimer = setInterval(refreshPage, 1000);
+    }
+});
+
+loadPage().finally(() => {
+    if (!pageClosed) pageRefreshTimer = setInterval(refreshPage, 1000);
+});

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block styles %}<link rel="stylesheet" href="{{ asset_url('/file-browser-assets/file-browser.css') }}">{% endblock %}
+{% block content %}
+<!-- 本地文件浏览 -->
+    <div class="card" id="localFiles">
+        <h2>本地文件浏览</h2>
+        <p class="fb-help">从已配置的监控目录进入，点击文件夹逐层浏览。这里显示目录内的全部文件，上传仍按扩展名规则筛选。</p>
+        <p class="fb-help">删除仅影响本地文件；正在上传的文件会受到保护。</p>
+        <div id="localFileBrowser"></div>
+    </div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ asset_url('/file-browser-assets/file-preview.js') }}"></script>
+<script src="{{ asset_url('/file-browser-assets/pagination.js') }}"></script>
+<script src="{{ asset_url('/file-browser-assets/file-browser.js') }}"></script>
+<script src="{{ asset_url('/static/js/files.js') }}"></script>
+{% endblock %}

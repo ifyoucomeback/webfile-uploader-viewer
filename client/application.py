@@ -71,6 +71,7 @@ class ClientApplication:
         self.server_files = {}
         self.server_files_time = 0
         self.local_sha256_cache.clear()
+        self.sync.request_full_sync()
         self.queue_event.set()
 
     async def shutdown(self):

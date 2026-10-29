@@ -1,26 +1,24 @@
-/* 等待队列已包含在状态响应中，翻页只切换本地视图，不改变上传顺序。 */
+/* 队列在服务端分页，轮询只传输当前页，不改变实际上传顺序。 */
 const QUEUE_PAGE_SIZE = 50;
 let currentQueuePage = 1;
 let currentQueueTotalPages = 0;
-let latestQueue = [];
 let queuePageJump = null;
+let queueRequestSequence = 0;
+let queueLoading = false;
 
-function renderQueue(queue) {
-    latestQueue = Array.isArray(queue) ? queue : [];
-    document.getElementById("queueCount").textContent = latestQueue.length;
-    currentQueueTotalPages = Math.ceil(latestQueue.length / QUEUE_PAGE_SIZE);
-    currentQueuePage = Math.min(Math.max(1, currentQueuePage), currentQueueTotalPages || 1);
-    const start = (currentQueuePage - 1) * QUEUE_PAGE_SIZE;
+function renderQueue(result) {
+    currentQueuePage = result.page;
+    currentQueueTotalPages = result.total_pages;
+    document.getElementById("queueCount").textContent = result.total;
     const table = document.getElementById("queueTable");
     table.replaceChildren();
-    const items = latestQueue.slice(start, start + QUEUE_PAGE_SIZE);
-    if (!items.length) {
+    if (!result.items.length) {
         const cell = table.insertRow().insertCell();
         cell.colSpan = 4;
         cell.className = "empty";
         cell.textContent = "没有等待上传的文件";
     }
-    items.forEach(file => {
+    result.items.forEach(file => {
         const row = table.insertRow();
         row.insertCell().textContent = file.name || "-";
         const path = row.insertCell();
@@ -41,20 +39,37 @@ function renderQueue(queue) {
     queuePageJump.update(currentQueuePage, currentQueueTotalPages);
 }
 
-function goToQueuePage(page) {
+async function loadQueuePage(page, quiet = false) {
+    if (quiet && queueLoading) return;
+    const sequence = ++queueRequestSequence;
+    queueLoading = true;
+    try {
+        const result = await readPageData(`/api/queue?page=${page}&page_size=${QUEUE_PAGE_SIZE}`);
+        if (sequence !== queueRequestSequence) return;
+        renderQueue(result);
+    } finally {
+        if (sequence === queueRequestSequence) queueLoading = false;
+    }
+}
+
+async function goToQueuePage(page) {
     if (!Number.isSafeInteger(page) || page < 1 || page > currentQueueTotalPages) return;
-    currentQueuePage = page;
-    refreshCurrentQueuePage();
+    try {
+        await loadQueuePage(page);
+        showPageError(null);
+    } catch (error) {
+        showPageError(error);
+    }
 }
 
 function previousQueuePage() {
-    goToQueuePage(currentQueuePage - 1);
+    return goToQueuePage(currentQueuePage - 1);
 }
 
 function nextQueuePage() {
-    goToQueuePage(currentQueuePage + 1);
+    return goToQueuePage(currentQueuePage + 1);
 }
 
-function refreshCurrentQueuePage() {
-    renderQueue(latestQueue);
+function refreshCurrentQueuePage(quiet = false) {
+    return loadQueuePage(currentQueuePage, quiet);
 }

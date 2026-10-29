@@ -1,6 +1,7 @@
 """本地上传队列去重、移除和入队。"""
 
 import os
+from itertools import islice
 
 from shared.file_access import canonical_path
 
@@ -87,6 +88,23 @@ class FileQueue:
 
     def snapshot(self):
         return list(self.app.upload_queue._queue)
+
+    def page(self, page=1, page_size=50):
+        """只复制当前页，避免网页轮询时传输整个等待队列。"""
+        total = self.app.upload_queue.qsize()
+        total_pages = (total + page_size - 1) // page_size
+        page = min(page, total_pages or 1)
+        start = (page - 1) * page_size
+        return {
+            "success": True,
+            "page": page,
+            "page_size": page_size,
+            "total": total,
+            "total_pages": total_pages,
+            "items": list(
+                islice(self.app.upload_queue._queue, start, start + page_size)
+            ),
+        }
 
     def remove_pending(self, path):
         key = canonical_path(path)

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block styles %}<link rel="stylesheet" href="{{ asset_url('/file-browser-assets/file-browser.css') }}">{% endblock %}
+{% block content %}
+<!-- 上传任务 -->
+    <div class="card">
+        <h2>上传任务</h2>
+        <div class="row">
+            <label>自动扫描上传:</label>
+            <span id="taskStatus">-</span>
+        </div>
+        <div class="row">
+            <label></label>
+            <button
+                id="taskButton"
+                class="task-button"
+                onclick="toggleTask()"
+            >
+                -
+            </button>
+        </div>
+        <div class="row">
+            <label></label>
+            <button
+                class="upload-all-button"
+                onclick="uploadAllFiles()"
+            >
+                立即上传全部扫描文件
+            </button>
+        </div>
+        <div
+            id="taskMessage"
+            class="message"
+        ></div>
+    </div>
+<!-- 上传队列 -->
+    <div class="card">
+        <h2>等待上传队列</h2>
+        <div class="row">
+            <label>等待数量:</label>
+            <span
+                id="queueCount"
+                class="queue-count"
+            >
+                0
+            </span>
+        </div>
+        <div class="table-scroll">
+        <table>
+            <thead>
+                <tr>
+                    <th>文件名</th>
+                    <th>相对路径</th>
+                    <th>大小</th>
+                    <th>格式</th>
+                </tr>
+            </thead>
+            <tbody id="queueTable"></tbody>
+        </table>
+        </div>
+        <div
+            id="queuePagination"
+            class="pagination-container"
+        >
+            <button
+                id="queuePreviousPageButton"
+                class="pagination-button"
+                onclick="previousQueuePage()"
+            >
+                上一页
+            </button>
+            <span
+                id="queuePaginationCurrent"
+                class="pagination-current"
+            >
+                第 0 / 0 页
+            </span>
+            <button
+                id="queueNextPageButton"
+                class="pagination-button"
+                onclick="nextQueuePage()"
+            >
+                下一页
+            </button>
+            <div id="queuePageJump"></div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ asset_url('/file-browser-assets/pagination.js') }}"></script>
+<script src="{{ asset_url('/static/js/queue.js') }}"></script>
+<script src="{{ asset_url('/static/js/tasks.js') }}"></script>
+{% endblock %}

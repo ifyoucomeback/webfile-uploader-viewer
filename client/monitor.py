@@ -239,6 +239,11 @@ class DirectoryMonitor:
         with self._lock:
             return list(self.files.values())
 
+    def rescan(self):
+        """重新读取磁盘，供启动补偿和手动全量扫描使用。"""
+        self._rebuild_file_cache()
+        return self.scan()
+
     def get_changed_files(self):
         """
         获取已经发生变化的文件。

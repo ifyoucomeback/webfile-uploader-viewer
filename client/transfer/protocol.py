@@ -222,14 +222,13 @@ class UploadProtocol:
         }
 
     async def _upload_chunk(self, upload_id, chunk_index, chunk_offset, chunk_data):
-        await self.uploader._limit_bandwidth(len(chunk_data))
         form = aiohttp.FormData()
         form.add_field("upload_id", str(upload_id))
         form.add_field("chunk_index", str(chunk_index))
         form.add_field("chunk_offset", str(chunk_offset))
         form.add_field(
             "chunk",
-            chunk_data,
+            self.uploader.iter_upload_data(chunk_data),
             filename=f"chunk_{chunk_index}",
             content_type="application/octet-stream",
         )

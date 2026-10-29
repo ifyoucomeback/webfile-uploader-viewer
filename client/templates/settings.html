@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- 服务端配置 -->
+    <div class="card">
+        <h2>服务端配置</h2>
+        <div class="row">
+            <label>Server Host:</label>
+            <input
+                type="text"
+                id="serverHost"
+            >
+        </div>
+        <div class="row">
+            <label>Server Port:</label>
+            <input
+                type="number"
+                id="serverPort"
+            >
+        </div>
+        <div class="row">
+            <label>预共享秘钥:</label>
+            <input
+                type="password"
+                id="uploadPsk"
+                placeholder="请输入服务端预共享秘钥"
+            >
+            <button
+                type="button"
+                class="refresh-button"
+                onclick="togglePskVisibility(this)"
+                style="margin-left: 10px;"
+            >
+                显示
+            </button>
+        </div>
+    </div>
+    <!-- 目录监控 -->
+    <div class="card">
+        <h2>目录监控配置</h2>
+        <div class="row">
+            <label>监控目录:</label>
+            <div style="width: 100%;">
+                <div id="directoryList"></div>
+                <div
+                    id="directoryEmpty"
+                    class="directory-empty"
+                >
+                    暂未配置监控目录
+                </div>
+                <div>
+                    <input
+                        type="text"
+                        id="newMonitorDirectory"
+                        placeholder="输入监控目录，例如 /data/video"
+                    >
+                    <button
+                        type="button"
+                        class="directory-add-button"
+                        onclick="addDirectory()"
+                    >
+                        添加目录
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <label>包含扩展名:</label>
+            <textarea
+                id="includeExtensions"
+            ></textarea>
+        </div>
+        <div class="row">
+            <label>排除扩展名:</label>
+            <textarea
+                id="excludeExtensions"
+            ></textarea>
+        </div>
+        <div class="row">
+            <label>扫描间隔（秒）:</label>
+            <input
+                type="number"
+                id="monitorInterval"
+            >
+        </div>
+    </div>
+    <!-- 上传配置 -->
+    <div class="card" id="uploadSettings">
+        <h2>上传配置</h2>
+        <div class="row">
+            <label for="maxConcurrentUploads">同时上传文件数:</label>
+            <select id="maxConcurrentUploads">
+                <option value="1">1 个文件（顺序上传）</option>
+                <option value="2">2 个文件</option>
+                <option value="3">3 个文件</option>
+                <option value="4">4 个文件</option>
+                <option value="5">5 个文件</option>
+            </select>
+        </div>
+        <p class="hint">保存后立即生效。降低并发数时，正在上传的文件会继续完成，后续按新数量启动。</p>
+        <div class="row">
+            <label>总上传带宽（Bytes/s）:</label>
+            <input
+                type="number"
+                id="maxBandwidth"
+            >
+            <span class="hint">所有上传文件共享；0 表示不限速</span>
+        </div>
+        <div class="row">
+            <label></label>
+            <button
+                class="save-button"
+                onclick="saveConfig()"
+            >
+                保存配置
+            </button>
+        </div>
+        <div
+            id="configMessage"
+            class="message"
+        ></div>
+    </div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ asset_url('/static/js/config.js') }}"></script>
+{% endblock %}

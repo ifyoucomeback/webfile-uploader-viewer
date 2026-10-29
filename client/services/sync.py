@@ -10,6 +10,16 @@ class FileSynchronizer:
 
     def __init__(self, app):
         self.app = app
+        self._full_sync_pending = True
+        self._full_sync_retry_at = 0
+        self._full_sync_revision = 0
+        self._full_sync_lock = asyncio.Lock()
+
+    def request_full_sync(self):
+        """恢复自动上传或修改配置后，重新检查目录中的已有文件。"""
+        self._full_sync_revision += 1
+        self._full_sync_pending = True
+        self._full_sync_retry_at = 0
 
     @staticmethod
     def _file_key(file_info):
@@ -126,25 +136,38 @@ class FileSynchronizer:
         return self._queue_sync_file(file_info, path)
 
     async def sync_all_files(self, force_refresh=True):
-        files = self.app.monitor.scan()
-        await self.refresh_server_files(force_refresh)
-        added = 0
-        for file_info in files:
-            if await self.sync_file(file_info):
-                added += 1
-        return {"scanned": len(files), "added": added}
+        async with self._full_sync_lock:
+            loop = asyncio.get_running_loop()
+            files = await loop.run_in_executor(None, self.app.monitor.rescan)
+            await self.refresh_server_files(force_refresh)
+            added = 0
+            for file_info in files:
+                if await self.sync_file(file_info):
+                    added += 1
+            return {"scanned": len(files), "added": added}
 
     async def add_all_files_to_queue(self):
         return await self.sync_all_files(True)
 
     async def add_initial_files(self):
+        if not self.app.enabled or not self._full_sync_pending:
+            return
+        loop = asyncio.get_running_loop()
+        if loop.time() < self._full_sync_retry_at:
+            return
+        revision = self._full_sync_revision
         try:
             result = await self.sync_all_files(True)
+            # 同步期间若配置变化或任务暂停，保留下一次全量检查。
+            if revision == self._full_sync_revision and self.app.enabled:
+                self._full_sync_pending = False
             print(
-                f"[STARTUP] 初始同步: 发现 {result['scanned']} 个文件，需要上传 {result['added']} 个文件"
+                f"[SYNC] 全量同步: 发现 {result['scanned']} 个文件，加入上传队列 {result['added']} 个文件"
             )
         except Exception as e:
-            print(f"[STARTUP SYNC ERROR] {type(e).__name__}: {e}")
+            if revision == self._full_sync_revision:
+                self._full_sync_retry_at = loop.time() + 5
+            print(f"[SYNC] 全量同步失败，5 秒后自动重试: {type(e).__name__}: {e}")
 
     async def add_changed_files(self):
         if not self.app.enabled:
@@ -157,11 +180,13 @@ class FileSynchronizer:
             await self.refresh_server_files(False)
         except Exception as e:
             print(f"[SYNC ERROR] 获取服务端文件列表失败: {type(e).__name__}: {e}")
+            self.request_full_sync()
             return
         for file_info in changed_files:
             try:
                 await self.sync_file(file_info)
             except Exception as e:
+                self.request_full_sync()
                 print(
                     f"[SYNC ERROR] {file_info.get('path', '')}: {type(e).__name__}: {e}"
                 )

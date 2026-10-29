@@ -306,9 +306,7 @@ async function saveConfig() {
         setConfig(
             result.config
         );
-        await loadFilesPage(
-            1
-        );
+        await refreshPage();
     } catch (error) {
         showMessage(
             "configMessage",

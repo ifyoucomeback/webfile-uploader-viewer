@@ -2,7 +2,7 @@ async function toggleTask() {
     try {
         const statusResponse =
             await fetch(
-                "/api/status"
+                "/api/status?include_queue=false"
             );
         if (
             !statusResponse.ok
@@ -58,7 +58,7 @@ async function toggleTask() {
                 "自动扫描上传任务已暂停"
             );
         }
-        await loadPage();
+        await refreshPage();
     } catch (error) {
         showMessage(
             "taskMessage",

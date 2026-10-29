@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} · 文件上传客户端</title>
+    <link rel="stylesheet" href="{{ asset_url('/static/css/style.css') }}">
+    {% block styles %}{% endblock %}
+</head>
+<body data-page="{{ page }}">
+    <div class="client-layout">
+        <aside class="client-sidebar">
+            <a class="client-brand" href="/">文件上传客户端</a>
+            <nav class="client-page-navigation" aria-label="客户端导航">
+                {% for key, url, title in [('uploads', '/', '正在上传'), ('queue', '/queue', '上传队列'), ('files', '/files', '本地文件浏览'), ('settings', '/settings', '设置')] %}
+                <a href="{{ url }}"{% if page == key %} class="active" aria-current="page"{% endif %}>{{ title }}</a>
+                {% endfor %}
+            </nav>
+        </aside>
+        <main class="client-main">
+            <header class="client-header">
+                <div><p class="client-eyebrow">客户端管理</p><h1>{{ page_title }}</h1></div>
+                <div class="client-identity"><span id="clientName">-</span><span id="clientIP">-</span></div>
+            </header>
+            <div class="client-connection" aria-label="连接状态">
+                <span>运行状态：<strong id="clientRunning">-</strong></span>
+                <span>服务端：<strong id="serverConnected">-</strong></span>
+                <span>文件上传限速：<strong id="uploadBandwidthLimit">-</strong></span>
+            </div>
+            <p id="pageMessage" class="error-text" role="alert" hidden></p>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    <script src="{{ asset_url('/static/js/common.js') }}"></script>
+    <script src="{{ asset_url('/static/js/status.js') }}"></script>
+    {% block scripts %}{% endblock %}
+    <script src="{{ asset_url('/static/js/app.js') }}"></script>
+</body>
+</html>
